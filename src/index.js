@@ -73,7 +73,7 @@ client.on("message", async (message) => {
   }
 
   // User must be in the correct channel
-  if (message.member.voice.channel.name !== broadcastChannel) {
+  if ((message.content === "!listen" || message.content === "!disconnect") && (message.member.voice.channel.name !== broadcastChannel)) {
     console.log("Users not in broadcast channel");
     message.channel.send("You need to be in #" + broadcastChannel);
     return;
