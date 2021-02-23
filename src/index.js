@@ -171,7 +171,6 @@ client.on("message", async (message) => {
       ffmpeg = null;
     }
     if (mixer) {
-      mixer.end();
       mixer = null;
     }
     const connection = await message.member.voice.channel.join();
