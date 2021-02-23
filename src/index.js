@@ -42,7 +42,6 @@ function spawnFfmpeg() {
     "1000",
     "-content_type",
     "audio/mpeg",
-    "-tls",
     streamOutput
   ];
 
