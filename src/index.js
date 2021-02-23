@@ -115,7 +115,7 @@ client.on("message", async (message) => {
       // audio.pipe(fs.createWriteStream("user_audio"));
       let input = mixer.input({
         channels: 2,
-        volume: 75
+        volume: 100
       });
       audio.pipe(input).on("error", () => {
         console.log("Discord error from join through !listen");
