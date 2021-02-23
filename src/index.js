@@ -4,7 +4,7 @@ const client = new Discord.Client();
 var AudioMixer = require("audio-mixer");
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-const streamOutput = process.env.stream_Output;
+const streamOutput = process.env.STREAM;
 const broadcastChannel = "listen";
 const controlChannel = "studio3";
 
@@ -42,6 +42,7 @@ function spawnFfmpeg() {
     "1000",
     "-content_type",
     "audio/mpeg",
+    "-tls",
     streamOutput
   ];
 
