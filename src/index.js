@@ -8,12 +8,7 @@ const streamOutput = process.env.STREAM;
 const broadcastChannel = "listen";
 const controlChannel = "studio3";
 
-let mixer = new AudioMixer.Mixer({
-  channels: 2,
-  bitDepth: 16,
-  sampleRate: 48000,
-  clearInterval: 250
-});
+let mixer;
 
 client.once("ready", () => {
   console.log("Ready!");
@@ -63,7 +58,7 @@ function spawnFfmpeg() {
 
   return ffmpeg;
 }
-
+var ffmpeg;
 client.on("message", async (message) => {
   // Ignore bot messages
   if (message.member.user.bot) {
@@ -86,6 +81,20 @@ client.on("message", async (message) => {
 
   // Join the same voice channel of the author of the message
   if (message.content === "!listen" && message.member.voice.channel) {
+    if (!ffmpeg) {
+      ffmpeg = spawnFfmpeg();
+    }
+    if (!mixer) {
+      mixer = new AudioMixer.Mixer({
+        channels: 2,
+        bitDepth: 16,
+        sampleRate: 48000,
+        clearInterval: 250
+      });
+      mixer.pipe(ffmpeg.stdin).on("error", () => {
+        console.log("Mixer error");
+      });
+    }
     const connection = await message.member.voice.channel.join();
 
     let usersJoined = [];
@@ -157,15 +166,18 @@ client.on("message", async (message) => {
 client.on("message", async (message) => {
   // Disconnect from the same voice channel of the author of the message
   if (message.content === "!disconnect" && message.member.voice.channel) {
+    if (ffmpeg) {
+      ffmpeg.kill();
+      ffmpeg = null;
+    }
+    if (mixer) {
+      mixer.end();
+      mixer = null;
+    }
     const connection = await message.member.voice.channel.join();
     connection.disconnect();
     console.log("Disconnected from: " + message.channel.name);
   }
-});
-
-var ffmpeg = spawnFfmpeg();
-mixer.pipe(ffmpeg.stdin).on("error", () => {
-  console.log("Mixer error");
 });
 
 // ffmpeg.stdout.pipe(fs.createWriteStream("user_audio.mp3"));
