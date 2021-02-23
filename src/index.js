@@ -1,6 +1,7 @@
 const { spawn } = require("child_process");
 const Discord = require("discord.js");
 const client = new Discord.Client();
+const fetch = require('node-fetch');
 var AudioMixer = require("audio-mixer");
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -175,6 +176,9 @@ client.on("message", async (message) => {
     }
     const connection = await message.member.voice.channel.join();
     connection.disconnect();
+
+    fetch("https://ctrl.freshair.radio/disconnect", {method: 'POST', body: 'Disconnect'});
+
     console.log("Disconnected from: " + message.channel.name);
   }
 });
